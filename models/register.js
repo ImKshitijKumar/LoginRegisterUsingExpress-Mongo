@@ -18,7 +18,7 @@ const validator = require('validator');
 
 const regSchema = new mongoose.Schema({
     name : {
-        type : String,
+        type : Object,
         required : true
     },
     userRole : {
@@ -34,6 +34,7 @@ const regSchema = new mongoose.Schema({
             }
         },
         lowercase : true,
+        unique : true,
         trim: true
     },
     contact : {

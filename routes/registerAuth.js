@@ -22,13 +22,4 @@ router.post('/api/post/user', async (req, res) => {
 })
 
 
-// get all registered users
-// router.get('/api/get/users', async (req, res) => {
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// })
-
 module.exports = router;
