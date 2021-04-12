@@ -13,17 +13,19 @@ router.post('/api/login', async (req, res) => {
         if(!user){
             return res.json({status: "error", msg: "Invalid Email"})
         }
+        const isMatch = await bcrypt.compare(plaintextpass, user.password);
+        const token = await user.generateAuthToken();
         
-        if(await bcrypt.compare(plaintextpass, user.password)){
-            const token = jwt.sign({
-                id: user._id,
-                email: user.email,
-                role: user.role
-            }, JWT_KEY)
+        if(isMatch){
+            // const token = jwt.sign({
+            //     id: user._id,
+            //     email: user.email,
+            //     role: user.role
+            // }, JWT_KEY, {expiresIn: "24h"})
             
-            return res.json({status: 'success', token: token })
+            return res.status(201).json({status: 'success', token: token })
         }else{
-            return res.json({status: "error", msg: "Invalid Password"})
+            return res(400).json({status: "error", msg: "Invalid Password"})
         }
     } catch (error) {
         re.status(400).send(error)

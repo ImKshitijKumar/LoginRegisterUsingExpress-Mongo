@@ -12,7 +12,7 @@ router.put('/api/user/:id', async (req, res) => {
         const user = jwt.verify(token, JWT_KEY)
         const _id = user.id
 
-        const newdata = await User.updateOne({ _id }, { $set: {
+        const newdata = await User.findByIdAndUpdate({ _id }, { $set: {
             
         }})
     } catch (error) {

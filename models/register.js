@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcryptjs = require('bcryptjs');
+const jwt = require("jsonwebtoken");
 
-// const nameSchema = mongoose.Schema({
-//     first: {
+// const tasklist = mongoose.Schema({
+//     projectName: {
 //         type : String,
-//         required: true,
-//         minLength: [3, 'First Name should be of atleast 3 Characters'],
-//         lowercase: true,
 //         trim: true
 //     },
-//     last: {
+//     Status: {
 //         type : String,
-//         lowercase: true,
 //         trim: true
 //     }
 // });
@@ -50,10 +48,37 @@ const regSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    tasklist : {
+        type : Array
+    },
+    authToken : [{
+        token : {
+            type : String,
+            required : true
+        }
+    }],
     addedOn : {
         type : Date,
         default : Date.now
     }
+})
+
+regSchema.methods.generateAuthToken = async function(){
+    try {
+        const token = jwt.sign({ _id: this._id.toString()}, process.env.AUTH_KEY);
+        this.authToken = this.authToken.concat({token});
+        await this.save();
+        return token;
+    } catch (error) {
+        res.send(error);
+    }
+}
+
+regSchema.pre('save', async function(next){
+    if(this.isModified("password")){
+        this.password = await bcryptjs.hash(this.password, 10)
+    }
+    next();
 })
 
 const User = new mongoose.model('User', regSchema)
